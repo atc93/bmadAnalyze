@@ -10,7 +10,7 @@ const double PI    = 3.1415926535897932384626433832795 ;
 int main() {
 
 	// Open ROOT file and associated tree
-	TString inRootFileName = "/nfs/gm2/data1/achapela/bmadAnalyze/fiber.root" ;
+	TString inRootFileName = "/nfs/gm2/data1/achapela/bmadAnalyze/harp.root" ;
 	TFile *inFile = new TFile(inRootFileName, "UPDATE") ;
 	TTree *inTree = (TTree*) inFile->Get("tree") ;
 
@@ -19,7 +19,6 @@ int main() {
 
 	// Assigned the above variables to the tree branches
 	inTree->SetBranchAddress("harp",  	&harp) ;
-	inTree->SetBranchAddress("fiber",  &fiber) ;
 	inTree->SetBranchAddress("time",  	&time) ;
 	inTree->SetBranchAddress("x",  &x) ;
 	inTree->SetBranchAddress("px",  	&px) ;
@@ -33,8 +32,8 @@ int main() {
 
 	//y Define 1D histogram to plot the Muon detection time at the "fiber harp"
 	TH1D *h_mu_t = new TH1D("h_fr","Muon detection time",672,0, 100128E-9) ; // 5 ns bin width
-	double fiberPos[16] = {-.045, -.03925, -.03875, -.02625, -.02575, -.01325, -.01275, -.00025, .00025, .01275, .01325, .02575, .02625, .03875, .03925, .045};
-	TH2D *h_harp_x_hits = new TH2D("h_harp_x_hits", "X-profile harp hits", 20000, 0, 100E-6, 15, fiberPos);
+	TH2D *h_harp_x_hits = new TH2D("h_harp_x_hits", "X-profile harp hits", 20000, 0, 100E-6, 20, -0.045, 0.045);
+
 	// Loop over tree entries 
 	for (int i=0; i<nentries; ++i) {
 
@@ -42,7 +41,7 @@ int main() {
 		inTree->GetEntry(i) ;
 
 		// Filter
-		if (harp!=2) continue;
+		if (harp!=1) continue;
 
 		// Fill histogram
 		h_mu_t->Fill(time) ;
@@ -55,7 +54,7 @@ int main() {
 	h_mu_t->Draw();
 	c.SaveAs("MuTime.eps") ;
 	c.SaveAs("MuTime.png") ;
-	TString outRootFileName = "/nfs/gm2/data1/achapela/bmadAnalyze/fiberHarp.root" ;
+	TString outRootFileName = "/nfs/gm2/data1/achapela/bmadAnalyze/fiberHarpPlane.root" ;
 	TFile *outFile = new TFile(outRootFileName, "RECREATE") ;
 	h_mu_t->Write();
 	h_harp_x_hits->Write();
